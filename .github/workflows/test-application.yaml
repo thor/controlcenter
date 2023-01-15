@@ -34,7 +34,6 @@ jobs:
     - uses: dorny/test-reporter@v1
       with:
         name: Laravel/PHPUnit Tests
-        path: '../*.junit.xml'
+        path: '*.junit.xml'
         reporter: java-junit
-        working-directory: tests
         path-replace-backslashes: true
