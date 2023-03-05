@@ -22,3 +22,6 @@ public/images/logos/*
 public/js/*
 resources/sass/_env.scss
 yarn-error.log
+
+# Additional types and documentation for editors to better resolve symbols
+_ide_helper_models.php
