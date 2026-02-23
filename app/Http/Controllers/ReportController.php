@@ -379,10 +379,13 @@ class ReportController extends Controller
                     ->from('rating_training')
                     ->join('ratings', 'ratings.id', 'rating_training.rating_id')
                     ->whereColumn('rating_training.training_id', 'trainings.id')
-                    ->where('ratings.vatsim_rating', '>=', 3)
-                    ->whereNotNull('ratings.vatsim_rating');
+                    ->where(function ($ratingQuery) {
+                        $ratingQuery->where('ratings.vatsim_rating', '>=', 3)
+                            ->whereNotNull('ratings.vatsim_rating')
+                            ->orWhereNotNull('ratings.endorsement_type');
+                    });
             })
-            ->whereIn('trainings.type', [1, 4])
+            ->whereIn('trainings.type', [1, 4, 5])
             ->whereIn('result', ['PASSED', 'FAILED'])
             ->whereBetween('examination_date', [$queryStart, $queryEnd])
             ->groupBy('exam_date', 'result');

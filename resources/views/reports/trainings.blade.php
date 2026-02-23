@@ -531,7 +531,7 @@
                         stacked: true,
                         title: {
                             display: true,
-                            text: 'Note: This graph only shows standard and fast-tracked CPTs excluding S1'
+                            text: 'Note: This graph includes standard, fast-tracked, and endorsement CPTs excluding S1'
                         }
                     },
                     y: {

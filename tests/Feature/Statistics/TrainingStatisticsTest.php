@@ -2,6 +2,9 @@
 
 namespace Tests\Feature\Statistics;
 
+use App\Models\Rating;
+use App\Models\Training;
+use App\Models\TrainingExamination;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -14,12 +17,14 @@ class TrainingStatisticsTest extends TestCase
 
     protected $admin;
 
+    protected $area;
+
     protected function setUp(): void
     {
         parent::setUp();
         $this->admin = User::factory()->create();
-        $area = \App\Models\Area::factory()->create();
-        $this->admin->groups()->attach(1, ['area_id' => $area->id]);
+        $this->area = \App\Models\Area::factory()->create();
+        $this->admin->groups()->attach(1, ['area_id' => $this->area->id]);
     }
 
     #[Test]
@@ -156,6 +161,34 @@ class TrainingStatisticsTest extends TestCase
         $response->assertStatus(200);
         $response->assertViewHas('newRequests', function ($newRequests) {
             return array_sum(collect($newRequests)->flatten()->all()) === 1;
+        });
+    }
+
+    #[Test]
+    public function it_includes_endorsement_trainings_in_pass_fail_statistics()
+    {
+        $endorsementRating = Rating::factory()->create([
+            'vatsim_rating' => null,
+            'endorsement_type' => 'T1',
+        ]);
+
+        $training = Training::factory()->create([
+            'user_id' => $this->admin->id,
+            'area_id' => $this->area->id,
+            'type' => 5,
+        ]);
+        $training->ratings()->attach($endorsementRating->id);
+
+        TrainingExamination::factory()->create([
+            'training_id' => $training->id,
+            'result' => 'PASSED',
+            'examination_date' => now()->subDay(),
+        ]);
+
+        $response = $this->actingAs($this->admin)->get(route('reports.trainings'));
+        $response->assertStatus(200);
+        $response->assertViewHas('passFailRequests', function ($passFailRequests) {
+            return array_sum($passFailRequests['PASSED']) === 1;
         });
     }
 }
