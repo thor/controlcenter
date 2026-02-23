@@ -96,7 +96,7 @@ class ReportController extends Controller
             }
         }
 
-        [$newRequests, $completedRequests, $closedRequests, $passFailRequests, $labels] = $this->getBiAnnualRequestsStats($filterArea, $startDate, $endDate);
+        [$newRequests, $completedRequests, $closedRequests, $passedExamRequests, $failedExamRequests, $labels] = $this->getBiAnnualRequestsStats($filterArea, $startDate, $endDate);
         $cardStats = $this->getCardStats($filterArea, $startDate, $endDate);
         $totalRequests = $this->getDailyRequestsStats($filterArea, $startDate, $endDate);
         $queues = $this->getQueueStats($filterArea);
@@ -109,7 +109,8 @@ class ReportController extends Controller
             'newRequests' => $newRequests,
             'completedRequests' => $completedRequests,
             'closedRequests' => $closedRequests,
-            'passFailRequests' => $passFailRequests,
+            'passedExamRequests' => $passedExamRequests,
+            'failedExamRequests' => $failedExamRequests,
             'queues' => $queues,
             'labels' => $labels,
             'startDate' => $startDate,
@@ -370,25 +371,32 @@ class ReportController extends Controller
         }
 
         // Fetch and process examination data
-        $passFailRequests = ['PASSED' => array_fill(0, $totalBuckets, 0), 'FAILED' => array_fill(0, $totalBuckets, 0)];
+        $passedExamRequests = [];
+        $failedExamRequests = [];
+        foreach ($ratings as $rating) {
+            $passedExamRequests[$rating->name] = array_fill(0, $totalBuckets, 0);
+            $failedExamRequests[$rating->name] = array_fill(0, $totalBuckets, 0);
+        }
+
         $examinationsQuery = DB::table('training_examinations')
-            ->select(DB::raw('count(training_examinations.id) as count'), DB::raw(Sql::date('training_examinations.examination_date', 'exam_date')), 'result')
+            ->select(
+                DB::raw('count(training_examinations.id) as count'),
+                DB::raw(Sql::date('training_examinations.examination_date', 'exam_date')),
+                'result',
+                'ratings.name as rating_name'
+            )
             ->join('trainings', 'trainings.id', '=', 'training_examinations.training_id')
-            ->whereExists(function ($query) {
-                $query->select(DB::raw(1))
-                    ->from('rating_training')
-                    ->join('ratings', 'ratings.id', 'rating_training.rating_id')
-                    ->whereColumn('rating_training.training_id', 'trainings.id')
-                    ->where(function ($ratingQuery) {
-                        $ratingQuery->where('ratings.vatsim_rating', '>=', 3)
-                            ->whereNotNull('ratings.vatsim_rating')
-                            ->orWhereNotNull('ratings.endorsement_type');
-                    });
+            ->join('rating_training', 'rating_training.training_id', '=', 'trainings.id')
+            ->join('ratings', 'ratings.id', '=', 'rating_training.rating_id')
+            ->where(function ($ratingQuery) {
+                $ratingQuery->where('ratings.vatsim_rating', '>=', 3)
+                    ->whereNotNull('ratings.vatsim_rating')
+                    ->orWhereNotNull('ratings.endorsement_type');
             })
             ->whereIn('trainings.type', [1, 4, 5])
             ->whereIn('result', ['PASSED', 'FAILED'])
             ->whereBetween('examination_date', [$queryStart, $queryEnd])
-            ->groupBy('exam_date', 'result');
+            ->groupBy('exam_date', 'result', 'ratings.name');
 
         if ($areaFilter) {
             $examinationsQuery->where('trainings.area_id', $areaFilter);
@@ -400,8 +408,16 @@ class ReportController extends Controller
             $date = Carbon::parse($entry->exam_date);
             $key = $date->format('Y-m');
 
-            if (isset($monthTranslator[$key])) {
-                $passFailRequests[$entry->result][$monthTranslator[$key]] += $entry->count;
+            if (! isset($monthTranslator[$key])) {
+                continue;
+            }
+
+            if ($entry->result === 'PASSED' && isset($passedExamRequests[$entry->rating_name])) {
+                $passedExamRequests[$entry->rating_name][$monthTranslator[$key]] += $entry->count;
+            }
+
+            if ($entry->result === 'FAILED' && isset($failedExamRequests[$entry->rating_name])) {
+                $failedExamRequests[$entry->rating_name][$monthTranslator[$key]] += $entry->count;
             }
         }
 
@@ -412,13 +428,20 @@ class ReportController extends Controller
                 || array_sum($closedRequests[$series]) > 0
         );
 
+        $nonZeroExamSeriesNames = collect($passedExamRequests)->keys()->filter(
+            fn ($series) => array_sum($passedExamRequests[$series]) > 0
+                || array_sum($failedExamRequests[$series]) > 0
+        );
+
         $filter = fn ($chart) => collect($chart)->only($nonZeroSeriesNames)->all();
+        $filterExams = fn ($chart) => collect($chart)->only($nonZeroExamSeriesNames)->all();
 
         return [
             $filter($newRequests),
             $filter($completedRequests),
             $filter($closedRequests),
-            $passFailRequests,
+            $filterExams($passedExamRequests),
+            $filterExams($failedExamRequests),
             $labels,
         ];
     }

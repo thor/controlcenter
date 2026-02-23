@@ -184,11 +184,24 @@
         <div class="card shadow mb-4">
             <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 fw-bold text-white">
-                    Passed and failed exams{{ $startDate ? '' : ' last 6 months' }}
+                    Passed exams{{ $startDate ? '' : ' last 6 months' }}
                 </h6>
             </div>
             <div class="card-body">
-                <canvas id="TrainingPassFailRate"></canvas>
+                <canvas id="trainingPassedExams"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xl-4 col-md-12 mb-12 d-none d-xl-block d-lg-block d-md-block">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 fw-bold text-white">
+                    Failed exams{{ $startDate ? '' : ' last 6 months' }}
+                </h6>
+            </div>
+            <div class="card-body">
+                <canvas id="trainingFailedExams"></canvas>
             </div>
         </div>
     </div>
@@ -493,28 +506,83 @@
 
     document.addEventListener("DOMContentLoaded", function () {
 
-        // Pass/fail rate for requests
-        var trainingPassFailRateElement = document.getElementById("TrainingPassFailRate");
-        if (!trainingPassFailRateElement) return;
+        // Passed exams for requests grouped by rating
+        var trainingPassedExamsElement = document.getElementById("trainingPassedExams");
+        if (!trainingPassedExamsElement) return;
 
-        var passFailRequestsData = {!! json_encode($passFailRequests) !!}
+        var passedExamRequestsData = {!! json_encode($passedExamRequests) !!}
+        var passedExamDatasets = [];
+        for (const rating in passedExamRequestsData) {
+            passedExamDatasets.push({
+                label: rating,
+                data: passedExamRequestsData[rating]
+            })
+        }
 
         var barChartData = {
             labels: {!! json_encode($labels) !!},
-            datasets: [{
-                label: 'Failed',
-                backgroundColor: 'rgb(200, 100, 100)',
-                data: passFailRequestsData["FAILED"]
-            }, {
-                label: 'Passed',
-                backgroundColor: 'rgb(100, 200, 100)',
-                data: passFailRequestsData["PASSED"]
-            }]
+            datasets: passedExamDatasets
 
         };
 
-        var mix = trainingPassFailRateElement.getContext('2d');
-        var passFailTrainings = new Chart(mix, {
+        var mix = trainingPassedExamsElement.getContext('2d');
+        var passedExamsTrainings = new Chart(mix, {
+            type: 'bar',
+            data: barChartData,
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        labels: {
+                            generateLabels: generateLegendLabelsWithTotal
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        title: {
+                            display: true,
+                            text: 'Note: This graph includes standard, fast-tracked, and endorsement CPTs excluding S1'
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        ticks: {
+                            stepSize: 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+<script>
+
+    document.addEventListener("DOMContentLoaded", function () {
+
+        // Failed exams for requests grouped by rating
+        var trainingFailedExamsElement = document.getElementById("trainingFailedExams");
+        if (!trainingFailedExamsElement) return;
+
+        var failedExamRequestsData = {!! json_encode($failedExamRequests) !!}
+        var failedExamDatasets = [];
+        for (const rating in failedExamRequestsData) {
+            failedExamDatasets.push({
+                label: rating,
+                data: failedExamRequestsData[rating]
+            })
+        }
+
+        var barChartData = {
+            labels: {!! json_encode($labels) !!},
+            datasets: failedExamDatasets
+
+        };
+
+        var mix = trainingFailedExamsElement.getContext('2d');
+        var failedExamsTrainings = new Chart(mix, {
             type: 'bar',
             data: barChartData,
             options: {

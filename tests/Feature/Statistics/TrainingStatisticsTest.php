@@ -187,8 +187,11 @@ class TrainingStatisticsTest extends TestCase
 
         $response = $this->actingAs($this->admin)->get(route('reports.trainings'));
         $response->assertStatus(200);
-        $response->assertViewHas('passFailRequests', function ($passFailRequests) {
-            return array_sum($passFailRequests['PASSED']) === 1;
+        $response->assertViewHas('passedExamRequests', function ($passedExamRequests) {
+            return array_sum(collect($passedExamRequests)->flatten()->all()) === 1;
+        });
+        $response->assertViewHas('failedExamRequests', function ($failedExamRequests) {
+            return array_sum(collect($failedExamRequests)->flatten()->all()) === 0;
         });
     }
 }
