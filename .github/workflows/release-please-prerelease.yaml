@@ -1,5 +1,5 @@
 ---
-name: Release (release-please prerelease)
+name: Release (pre-release-please)
 
 on:
   workflow_dispatch:
@@ -12,7 +12,7 @@ on:
         options:
           - alpha
           - beta
-          - arc
+          - rc
       target_branch:
         description: "Branch to run release-please against"
         required: false
