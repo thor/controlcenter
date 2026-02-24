@@ -73,5 +73,11 @@
     // Link Colors
     --link-color: #1a475f;
     --link-hover-color: #011328;
+
+    .alert-primary {
+        a {
+            color: #ddd !important;
+        }
+    }
 }
 

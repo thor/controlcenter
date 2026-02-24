@@ -29,6 +29,7 @@
     --color-green: #5dbd9a;
     --color-teal: #4dd0e1;
     --color-cyan: #80deea;
+    --color-info: #4a9cc5;
     
     // Gray Scale (inverted for dark mode)
     --color-gray-100: #2a2a2a;
@@ -87,6 +88,11 @@
     .btn-light {
         --bs-btn-bg: #1c2128;
         --bs-btn-color: #fff;
+    }
+    .navbar-nav {
+        .nav-link.show {
+            color: #ddd;
+        }
     }
 }
 
