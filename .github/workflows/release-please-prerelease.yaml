@@ -2,6 +2,9 @@
 name: Release (pre-release-please)
 
 on:
+  branches:
+    - main
+    - ci/release-please
   workflow_dispatch:
     inputs:
       prerelease_type:
@@ -16,7 +19,7 @@ on:
       target_branch:
         description: "Branch to run release-please against"
         required: false
-        default: "experiment/release-please"
+        default: "ci/release-please"
         type: string
       release_as:
         description: "Version to run release-please for"
@@ -49,8 +52,6 @@ jobs:
           token: ${{ secrets.VATSCA_BOT_TOKEN || github.token }}
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-beta.json
-          versioning-strategy: prerelease
-          release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (rc)
         if: ${{ github.event.inputs.prerelease_type == 'rc' }}
