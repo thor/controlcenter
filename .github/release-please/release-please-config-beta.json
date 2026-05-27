@@ -9,7 +9,8 @@
     ".": {
       "prerelease": true,
       "prerelease-type": "beta",
-      "versioning-strategy": "prerelease"
+      "versioning-strategy": "prerelease",
+      "versioning": "prerelease"
     }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"

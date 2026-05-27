@@ -6,7 +6,10 @@
     "config/app.php"
   ],
   "packages": {
-    ".": {}
+    ".": {
+      "versioning": "default",
+      "prerelease": false
+    }
   },
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
