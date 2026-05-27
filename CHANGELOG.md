@@ -1,5 +1,17 @@
 # Changelog
 
+## [7.0.0-beta.3](https://github.com/thor/controlcenter/compare/v7.0.0-beta02...v7.0.0-beta.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* implement something that again should push another beta ([9d8a913](https://github.com/thor/controlcenter/commit/9d8a913c951c928adbf42334a4bb7e5eb361c0d8))
+
+
+### Continuous Integration
+
+* fix branches ([0be213a](https://github.com/thor/controlcenter/commit/0be213a7e88345cd617859b315060021ee88a442))
+
 ## [7.0.0-beta02](https://github.com/thor/controlcenter/compare/v7.0.0-beta.1...v7.0.0-beta02) (2026-05-27)
 
 
