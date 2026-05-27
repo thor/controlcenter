@@ -2,9 +2,10 @@
 name: Release (pre-release-please)
 
 on:
-  branches:
-    - main
-    - ci/release-please
+  push:
+    branches:
+      - main
+      - ci/release-please
   workflow_dispatch:
     inputs:
       prerelease_type:
@@ -46,12 +47,14 @@ jobs:
           release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (beta)
-        if: ${{ github.event.inputs.prerelease_type == 'beta' }}
+        if: ${{ github.event.inputs.prerelease_type == 'beta' || github.event_name == 'push' }}
         uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.VATSCA_BOT_TOKEN || github.token }}
-          target-branch: ${{ github.event.inputs.target_branch }}
+          target-branch: ${{ github.event.inputs.target_branch || 'ci/release-please' }}
           config-file: .github/release-please/release-please-config-beta.json
+          versioning-strategy: prerelease
+          prerelease: true
 
       - name: Run release-please (rc)
         if: ${{ github.event.inputs.prerelease_type == 'rc' }}
