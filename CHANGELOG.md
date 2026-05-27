@@ -1,5 +1,40 @@
 # Changelog
 
+## [7.0.0-beta.3](https://github.com/thor/controlcenter/compare/v7.0.0-beta02...v7.0.0-beta.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* implement something that again should push another beta ([9d8a913](https://github.com/thor/controlcenter/commit/9d8a913c951c928adbf42334a4bb7e5eb361c0d8))
+
+
+### Continuous Integration
+
+* fix branches ([0be213a](https://github.com/thor/controlcenter/commit/0be213a7e88345cd617859b315060021ee88a442))
+
+## [7.0.0-beta02](https://github.com/thor/controlcenter/compare/v7.0.0-beta.1...v7.0.0-beta02) (2026-05-27)
+
+
+### Bug Fixes
+
+* implement some fix that should push another beta ([e93f470](https://github.com/thor/controlcenter/commit/e93f470713345f32d479fba6480feef5c29e4983))
+
+## [7.0.0-beta.1](https://github.com/thor/controlcenter/compare/v6.3.5...v7.0.0-beta.1) (2026-05-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* transition to granular configuration-based roles and permissions
+
+### Features
+
+* transition to granular configuration-based roles and permissions ([a70d8d4](https://github.com/thor/controlcenter/commit/a70d8d47d16ee6a424d94cea778427c9092aa92f))
+
+
+### Bug Fixes
+
+* some change ([44d3dae](https://github.com/thor/controlcenter/commit/44d3dae99b263d4979a4f7999251dc618f824e6b))
+
 ## [6.3.5](https://github.com/thor/controlcenter/compare/v6.4.3...v6.3.5) (2026-05-27)
 
 

@@ -2,6 +2,11 @@
 name: Release (pre-release-please)
 
 on:
+  push:
+    branches:
+      - main
+      - ci/release-please
+
   workflow_dispatch:
     inputs:
       prerelease_type:
@@ -16,7 +21,11 @@ on:
       target_branch:
         description: "Branch to run release-please against"
         required: false
-        default: "experiment/release-please"
+        default: "ci/release-please"
+        type: string
+      release_as:
+        description: "Version to release"
+        required: false
         type: string
 
 permissions:
@@ -26,30 +35,31 @@ permissions:
 jobs:
   release-please-prerelease:
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'workflow_dispatch' || contains(github.ref_name, '-beta.') || contains(github.ref_name, '-rc.') || contains(github.ref_name, '-alpha.') }}
     steps:
       - name: Run release-please (alpha)
-        if: ${{ github.event.inputs.prerelease_type == 'alpha' }}
-        uses: googleapis/release-please-action@v4
+        if: ${{ github.event.inputs.prerelease_type == 'alpha' || (github.event_name == 'push' && contains(github.ref_name, '-alpha.')) }}
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.VATSCA_BOT_TOKEN || github.token }}
-          target-branch: ${{ github.event.inputs.target_branch }}
+          target-branch: ${{ github.event.inputs.target_branch || github.ref_name }}
           config-file: .github/release-please/release-please-config-alpha.json
-          versioning-strategy: prerelease
+          release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (beta)
-        if: ${{ github.event.inputs.prerelease_type == 'beta' }}
-        uses: googleapis/release-please-action@v4
+        if: ${{ github.event.inputs.prerelease_type == 'beta' || (github.event_name == 'push' && contains(github.ref_name, '-beta.')) }}
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.VATSCA_BOT_TOKEN || github.token }}
-          target-branch: ${{ github.event.inputs.target_branch }}
+          target-branch: ${{ github.event.inputs.target_branch || github.ref_name }}
           config-file: .github/release-please/release-please-config-beta.json
-          versioning-strategy: prerelease
+          release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (rc)
-        if: ${{ github.event.inputs.prerelease_type == 'rc' }}
-        uses: googleapis/release-please-action@v4
+        if: ${{ github.event.inputs.prerelease_type == 'rc' || (github.event_name == 'push' && contains(github.ref_name, '-rc.')) }}
+        uses: googleapis/release-please-action@v5
         with:
           token: ${{ secrets.VATSCA_BOT_TOKEN || github.token }}
-          target-branch: ${{ github.event.inputs.target_branch }}
+          target-branch: ${{ github.event.inputs.target_branch || github.ref_name }}
           config-file: .github/release-please/release-please-config-rc.json
-          versioning-strategy: prerelease
+          release-as: ${{ github.event.inputs.release_as }}
