@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.0-beta.1](https://github.com/thor/controlcenter/compare/v7.0.0-beta...v7.0.0-beta.1) (2026-05-27)
+
+
+### Features
+
+* fradulent change ho ho ho ([a49a40f](https://github.com/thor/controlcenter/commit/a49a40f34901c1f2ca5b42cab6b6dc9e22fa9d66))
+
 ## [7.0.0-beta](https://github.com/thor/controlcenter/compare/v6.3.5...v7.0.0-beta) (2026-05-27)
 
 
