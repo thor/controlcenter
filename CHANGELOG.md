@@ -1,5 +1,21 @@
 # Changelog
 
+## [7.0.0-beta.1](https://github.com/thor/controlcenter/compare/v6.3.5...v7.0.0-beta.1) (2026-05-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* transition to granular configuration-based roles and permissions
+
+### Features
+
+* transition to granular configuration-based roles and permissions ([a70d8d4](https://github.com/thor/controlcenter/commit/a70d8d47d16ee6a424d94cea778427c9092aa92f))
+
+
+### Bug Fixes
+
+* some change ([44d3dae](https://github.com/thor/controlcenter/commit/44d3dae99b263d4979a4f7999251dc618f824e6b))
+
 ## [6.3.5](https://github.com/thor/controlcenter/compare/v6.4.3...v6.3.5) (2026-05-27)
 
 
