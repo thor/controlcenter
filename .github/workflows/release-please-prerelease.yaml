@@ -18,6 +18,11 @@ on:
         required: false
         default: "experiment/release-please"
         type: string
+      release_as:
+        description: "Version to run release-please for"
+        required: false
+        default: "7.0.0-beta.01"
+        type: string
 
 permissions:
   contents: write
@@ -35,6 +40,7 @@ jobs:
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-alpha.json
           versioning-strategy: prerelease
+          release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (beta)
         if: ${{ github.event.inputs.prerelease_type == 'beta' }}
@@ -44,6 +50,7 @@ jobs:
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-beta.json
           versioning-strategy: prerelease
+          release-as: ${{ github.event.inputs.release_as }}
 
       - name: Run release-please (rc)
         if: ${{ github.event.inputs.prerelease_type == 'rc' }}
@@ -53,3 +60,4 @@ jobs:
           target-branch: ${{ github.event.inputs.target_branch }}
           config-file: .github/release-please/release-please-config-rc.json
           versioning-strategy: prerelease
+          release-as: ${{ github.event.inputs.release_as }}
