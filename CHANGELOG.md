@@ -1,5 +1,12 @@
 # Changelog
 
+## [7.0.1-beta.3](https://github.com/thor/controlcenter/compare/v7.0.0-beta.3...v7.0.1-beta.3) (2026-05-27)
+
+
+### Bug Fixes
+
+* try another bug fix and see ([efbd297](https://github.com/thor/controlcenter/commit/efbd2976729b7d772cab5169704009cac03ecbb0))
+
 ## [7.0.0-beta.3](https://github.com/thor/controlcenter/compare/v7.0.0-beta02...v7.0.0-beta.3) (2026-05-27)
 
 
